@@ -379,7 +379,7 @@ public:
                 break;
             }
             case '\0' : {
-                ret = token(token_type::WHITE_SPACE, _start_line, _start_column, *_now_char);
+                ret = token(token_type::END_OF_FILE, _start_line, _start_column, *_now_char);
                 break;
             }
             default: {
