@@ -304,6 +304,11 @@ public:
         // TODO
     }
 
+    void number() {
+        token number = this->lexer->next_token_with_skip();
+        number.assert(token_type::INT_CONST, L"INT_CONST");
+    }
+
 private:
     lexer* lexer;
 };
