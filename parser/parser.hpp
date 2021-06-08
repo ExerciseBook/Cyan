@@ -334,6 +334,11 @@ public:
     void block() {
         token open = this->lexer->next_token_with_skip();
         open.assert(token_type::PARENTHESES_OPEN, L"{");
+        this->block$2();
+    }
+
+    void block$2() {
+        this->lexer->get_now_token().assert(token_type::PARENTHESES_OPEN, L"{");
 
         this->lexer->next_token_with_skip();
         while (this->lexer->get_now_token().get_type() != token_type::PARENTHESES_CLOSE) {
@@ -345,9 +350,10 @@ public:
     void block_item() {
         if (lexer->get_now_token().get_type() == token_type::CONST) {
             this->const_decl();
-        } else
-        if (lexer->get_now_token().get_type() == token_type::INT) {
+        } else if (lexer->get_now_token().get_type() == token_type::INT) {
             this->var_decl();
+        } else if (lexer->get_now_token().get_type() == token_type::PARENTHESES_OPEN) {
+            this->block$2();
         }
 
     }
