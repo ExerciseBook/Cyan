@@ -292,6 +292,54 @@ public:
     }
 
     void func_def(const token& type, const token& id, const token& round_bracket) {
+        token next = this->lexer->next_token_with_skip();
+        if (next.get_type() != token_type::ROUND_BRACKET_CLOSE) {
+            this->func_fparams(next);
+        }
+        this->block();
+    }
+
+    void func_fparams(const token& first) {
+        token next;
+        this->func_fparam(next, first);
+
+
+        while (next.get_type() != token_type::ROUND_BRACKET_CLOSE) {
+            next.assert(token_type::COMMA, L", or )");
+            token t = this->lexer->next_token_with_skip();
+            this->func_fparam(next, t);
+        }
+    }
+
+    void func_fparam(token& ret, const token& type) {
+        type.assert(token_type::INT, L"INT");
+
+        token ident = this->lexer->next_token_with_skip();
+        ident.assert(token_type::IDENT, L"IDENT");
+
+        // 判断掉第一个 []
+        token next = this->lexer->next_token_with_skip();
+        if (next.get_type() == token_type::SQUARE_BRACKET_OPEN) {
+            token first_close = this->lexer->next_token_with_skip();
+            first_close.assert(token_type::SQUARE_BRACKET_CLOSE, L"]");
+        } else {
+            ret = next;
+            return;
+        }
+
+        // 判断掉多个 [ exp ]，最后以 ） 结束
+        next = this->lexer->next_token_with_skip();
+        while (next.get_type() != token_type::ROUND_BRACKET_CLOSE) {
+            next.assert(token_type::SQUARE_BRACKET_OPEN, L"[");
+            this->exp();
+            token square_close = this->lexer->next_token_with_skip();
+
+            next = this->lexer->next_token_with_skip();
+        }
+        ret = next;
+    }
+
+    void block() {
         // TODO
     }
 
