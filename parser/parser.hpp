@@ -348,22 +348,84 @@ public:
     }
 
     void block_item() {
-        if (lexer->get_now_token().get_type() == token_type::CONST) {
-            this->const_decl();
-        } else if (lexer->get_now_token().get_type() == token_type::INT) {
-            this->var_decl();
-        } else if (lexer->get_now_token().get_type() == token_type::PARENTHESES_OPEN) {
-            this->block$2();
+        if (this->lexer->get_now_token().get_type() == token_type::CONST ||
+            this->lexer->get_now_token().get_type() == token_type::INT) {
+            this->stmt();
+        } else {
+            this->stmt();
         }
+    }
 
+   void decl() {
+        if (this->lexer->get_now_token().get_type() == token_type::CONST) {
+            this->const_decl();
+        } else if (this->lexer->get_now_token().get_type() == token_type::INT) {
+            this->var_decl();
+        } else {
+            this->stmt();
+        }
+    }
+
+    void stmt() {
+        if (this->lexer->get_now_token().get_type() == token_type::IDENT) {
+            // TODO
+            // stat -> lVal '=' exp ';'
+            // stat -> exp? ';'
+        } else if (this->lexer->get_now_token().get_type() == token_type::PARENTHESES_OPEN) {
+            this->block$2();
+        } else if (this->lexer->get_now_token().get_type() == token_type::IF) {
+            this->lexer->next_token_with_skip();
+            this->lexer->get_now_token().assert(token_type::ROUND_BRACKET_OPEN, L"(");
+
+            this->cond();
+
+            this->lexer->next_token_with_skip();
+            this->lexer->get_now_token().assert(token_type::ROUND_BRACKET_CLOSE, L")");
+
+            this->stmt();
+
+            this->lexer->next_token_with_skip();
+            if (this->lexer->get_now_token().get_type() == token_type::ELSE) {
+                this->stmt();
+            }
+        } else if (this->lexer->get_now_token().get_type() == token_type::WHILE) {
+            this->lexer->next_token_with_skip();
+            this->lexer->get_now_token().assert(token_type::ROUND_BRACKET_OPEN, L"(");
+
+            this->cond();
+
+            this->lexer->next_token_with_skip();
+            this->lexer->get_now_token().assert(token_type::ROUND_BRACKET_CLOSE, L")");
+
+            this->stmt();
+        } else if (this->lexer->get_now_token().get_type() == token_type::WHILE) {
+            this->lexer->next_token_with_skip();
+            this->lexer->get_now_token().assert(token_type::SEMICOLON, L";");
+        } else if (this->lexer->get_now_token().get_type() == token_type::CONTINUE) {
+            this->lexer->next_token_with_skip();
+            this->lexer->get_now_token().assert(token_type::SEMICOLON, L";");
+        } else if (this->lexer->get_now_token().get_type() == token_type::RETURN) {
+            // TODO
+            this->lexer->next_token_with_skip();
+
+            if (this->lexer->get_now_token().get_type() != token_type::SEMICOLON) {
+                this->add_exp$2(this->lexer->get_now_token());
+            }
+
+            this->lexer->get_now_token().assert(token_type::SEMICOLON, L";");
+        }
     }
 
     void add_exp() {
-        token next = lexer->next_token_with_skip();
+        token next = this->lexer->next_token_with_skip();
         this->add_exp$2(next);
     }
 
     void add_exp$2(const token& next) {
+        // TODO
+    }
+
+    void cond() {
         // TODO
     }
 
