@@ -300,18 +300,17 @@ public:
     }
 
     void func_fparams(const token& first) {
-        token next;
-        this->func_fparam(next, first);
+        this->func_fparam(first);
 
 
-        while (next.get_type() != token_type::ROUND_BRACKET_CLOSE) {
-            next.assert(token_type::COMMA, L", or )");
+        while (this->lexer->get_now_token().get_type() != token_type::ROUND_BRACKET_CLOSE) {
+            this->lexer->get_now_token().assert(token_type::COMMA, L", or )");
             token t = this->lexer->next_token_with_skip();
-            this->func_fparam(next, t);
+            this->func_fparam(t);
         }
     }
 
-    void func_fparam(token& ret, const token& type) {
+    void func_fparam(const token& type) {
         type.assert(token_type::INT, L"INT");
 
         token ident = this->lexer->next_token_with_skip();
@@ -323,7 +322,6 @@ public:
             token first_close = this->lexer->next_token_with_skip();
             first_close.assert(token_type::SQUARE_BRACKET_CLOSE, L"]");
         } else {
-            ret = next;
             return;
         }
 
@@ -336,10 +334,19 @@ public:
 
             next = this->lexer->next_token_with_skip();
         }
-        ret = next;
     }
 
     void block() {
+        token open = this->lexer->next_token_with_skip();
+        open.assert(token_type::PARENTHESES_OPEN, L"{");
+
+        this->lexer->next_token_with_skip();
+        while (this->lexer->get_now_token().get_type() != token_type::PARENTHESES_CLOSE) {
+            this->block_item();
+        }
+    }
+
+    void block_item() {
         // TODO
     }
 
