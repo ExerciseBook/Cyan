@@ -29,7 +29,7 @@ public :
 
     std::wstring get_message() {
         std::wostringstream stringStream;
-        stringStream << '[' << line << " : " << column + ']';
+        stringStream << '[' << line << " : " << column << ']';
         stringStream << ' ' << excepted << " expected, but " << found << " found.";
         std::wstring copyOfStr = stringStream.str();
 

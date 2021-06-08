@@ -19,10 +19,14 @@ int main() {
 //    }
 
     sysy_visitor visitor;
+    try {
 
-    parser _parser = parser(&_lexer);
-    _parser.comp_unit();
-
+        parser _parser = parser(&_lexer);
+        _parser.comp_unit();
+    }
+    catch (token_unexpected_exception &e) {
+        std::wcout << e.get_message();
+    }
     myfile.close();
     return 0;
 }

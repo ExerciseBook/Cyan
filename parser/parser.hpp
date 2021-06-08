@@ -29,8 +29,6 @@ public:
             if (lexer->get_now_token().get_type() == token_type::VOID) {
                 this->func_def();
             }
-
-            lexer->next_token_with_skip();
         }
     }
 
@@ -72,15 +70,14 @@ public:
         this->const_def();
 
         while (true) {
-            token next = lexer->next_token_with_skip();
-            if (next.get_type() == token_type::SEMICOLON) {
+            if (this->lexer->get_now_token().get_type() == token_type::SEMICOLON) {
+                this->lexer->next_token_with_skip();
                 break;
-            } else if (next.get_type() != token_type::COMMA){
-                next.error(L"COMMA");
+            } else if (this->lexer->get_now_token().get_type() != token_type::COMMA){
+                this->lexer->get_now_token().error(L"COMMA");
             }
         }
 
-        this->const_def();
     }
 
     void b_type(){
@@ -124,13 +121,15 @@ public:
             // { constInitVal (, constInitVal)* }
             while (true) {
                 this->const_init_val();
-                token split = lexer->next_token_with_skip();
-                if (split.get_type() == token_type::COMMA) {
+                if (this->lexer->get_now_token().get_type() == token_type::COMMA) {
                     // next element
-                } else if (split.get_type() == token_type::PARENTHESES_CLOSE) {
+                } else if (this->lexer->get_now_token().get_type() == token_type::PARENTHESES_CLOSE) {
+                    this->lexer->next_token_with_skip();
                     break;
                 }
             }
+        } else if (array_start.get_type() == token_type::PARENTHESES_CLOSE) {
+            // break
         } else {
             // 那就不是数组了
             this->const_exp$2(array_start);
@@ -156,21 +155,21 @@ public:
     void var_decl(const token& type, const token& id, const token& third) {
 //        this->b_type();
 
-        token next;
-        this->var_def$2(next, id, third);
+        this->var_def$2(id, third);
 
         while (true) {
-            if (next.get_type() == token_type::SEMICOLON) {
+            if (this->lexer->get_now_token().get_type() == token_type::SEMICOLON) {
+                this->lexer->next_token_with_skip();
                 break;
-            } else if (next.get_type() != token_type::COMMA){
-                next.error(L"COMMA");
+            } else if (this->lexer->get_now_token().get_type() != token_type::COMMA){
+                this->lexer->get_now_token().error(L"COMMA");
             }
 
-            this->var_def(next);
+            this->var_def();
         }
     }
 
-    void var_def$2(token &ret, const token& id, const token& third) {
+    void var_def$2(const token& id, const token& third) {
         // b [3][4] = {} ;
         // b = 1 ,
         // b [3] = {} ,
@@ -199,19 +198,17 @@ public:
         }
 
         if (next.get_type() == token_type::COMMA) {
-            ret = next;
             return;
         }
 
         if (next.get_type() == token_type::SEMICOLON) {
-            ret = next;
             return;
         }
 
         next.error(L", or ;");
     }
 
-    void var_def(token &ret) {
+    void var_def() {
         // b [3][4] = {} ;
         // b = 1 ,
         // b [3] = {} ,
@@ -241,12 +238,10 @@ public:
         }
 
         if (next.get_type() == token_type::COMMA) {
-            ret = next;
             return;
         }
 
         if (next.get_type() == token_type::SEMICOLON) {
-            ret = next;
             return;
         }
 
@@ -344,10 +339,17 @@ public:
         while (this->lexer->get_now_token().get_type() != token_type::PARENTHESES_CLOSE) {
             this->block_item();
         }
+        this->lexer->next_token_with_skip();
     }
 
     void block_item() {
-        // TODO
+        if (lexer->get_now_token().get_type() == token_type::CONST) {
+            this->const_decl();
+        } else
+        if (lexer->get_now_token().get_type() == token_type::INT) {
+            this->var_decl();
+        }
+
     }
 
     void add_exp() {
