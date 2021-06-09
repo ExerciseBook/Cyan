@@ -22,8 +22,7 @@ void run_test(const std::filesystem::path& case_path) {
     myfile.close();
 }
 
-int main(int argc, char *argv[]) {
-    std::filesystem::path test_cases_path("../cases");
+int run_test_suite(const std::filesystem::path& test_cases_path) {
     if (!std::filesystem::exists(test_cases_path)) {
         return -1;
     }
@@ -34,6 +33,15 @@ int main(int argc, char *argv[]) {
             run_test(i);
         }
     }
+
+}
+
+int main(int argc, char *argv[]) {
+//    run_test("../cases/section1/functional_test/15_array_test3.sy");
+
+    run_test_suite("../cases/section1/functional_test");
+    run_test_suite("../cases/section1/performance_test");
+    run_test_suite("../cases/section2/performance_test");
 
     return 0;
 }
