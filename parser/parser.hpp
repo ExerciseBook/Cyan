@@ -564,8 +564,8 @@ public:
                 token close = this->lexer->next_token_with_skip();
                 if (close.get_type() != token_type::ROUND_BRACKET_CLOSE) {
                     this->func_rparam();
-                    close = this->lexer->next_token_with_skip();
                 }
+                close = this->lexer->next_token_with_skip();
             } else {
                 this->primary_exp$2(is_only_lval, now);
             }
@@ -583,6 +583,9 @@ public:
         while (this->lexer->get_now_token().get_type() != token_type::ROUND_BRACKET_CLOSE) {
             this->exp();
             token split = this->lexer->get_now_token();
+            if (split.get_type() == token_type::ROUND_BRACKET_CLOSE) {
+                break;
+            }
             split.assert(token_type::COMMA, L",");
             this->lexer->next_token_with_skip();
         }

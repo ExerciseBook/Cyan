@@ -399,7 +399,8 @@ public:
                             (*next_char  != '*') && (*next_char != '/') &&
                             (*next_char  != '+') && (*next_char != '-') &&
                             (*next_char  != '!') && (*next_char != '%') &&
-                            (*next_char  != '&') && (*next_char != '|')
+                            (*next_char  != '&') && (*next_char != '|') &&
+                            (*next_char != '=')
                         )
                 ) {
                     get_next_char();
