@@ -587,11 +587,19 @@ public:
     }
 
     void l_val() {
-        // TODO
+        token now = this->lexer->get_now_token();
+        this->lexer->next_token_with_skip();
+        this->l_val$2(now);
     }
 
-    void l_val$2(const token &now) {
-        // TODO
+    void l_val$2(const token &ident) {
+        while (this->lexer->get_now_token().get_type() == token_type::SQUARE_BRACKET_OPEN) {
+            token open = this->lexer->get_now_token();
+            this->exp();
+            token close = this->lexer->get_now_token();
+            close.assert(token_type::SQUARE_BRACKET_CLOSE, L"]");
+            this->lexer->next_token_with_skip();
+        }
     }
 
     void cond() {
