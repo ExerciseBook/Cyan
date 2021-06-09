@@ -264,17 +264,8 @@ public:
             }
         } else {
             // 那就不是数组了
-            this->exp$2(array_start);
+            this->exp();
         }
-    }
-
-    void exp() {
-        token next = lexer->next_token_with_skip();
-        this->exp$2(next);
-    }
-
-    void exp$2(const token& next) {
-        this->add_exp$2(next);
     }
 
     void func_def() {
@@ -424,7 +415,7 @@ public:
             this->lexer->next_token_with_skip();
 
             if (this->lexer->get_now_token().get_type() != token_type::SEMICOLON) {
-                this->add_exp$2(this->lexer->get_now_token());
+                this->add_exp();
             }
 
             this->lexer->get_now_token().assert(token_type::SEMICOLON, L";");
@@ -432,16 +423,91 @@ public:
         }
     }
 
-    void add_exp() {
-        token next = this->lexer->next_token_with_skip();
-        this->add_exp$2(next);
+    void exp() {
+        bool tmp;
+        this->exp(tmp);
     }
 
-    void add_exp$2(const token& next) {
+    void exp(bool &is_only_lval) {
+        this->add_exp(is_only_lval)
+    }
+
+    void add_exp() {
+        bool tmp;
+        this->add_exp(tmp);
+    }
+
+    void add_exp(bool &is_only_lval) {
+        if (
+                this->lexer->get_now_token().get_type() == token_type::ROUND_BRACKET_OPEN ||
+                this->lexer->get_now_token().get_type() == token_type::ADD ||
+                this->lexer->get_now_token().get_type() == token_type::SUB ||
+                this->lexer->get_now_token().get_type() == token_type::NOT ||
+                this->lexer->get_now_token().get_type() == token_type::INT_CONST ||
+                this->lexer->get_now_token().get_type() == token_type::IDENT
+        ) {
+            this->mul_exp(is_only_lval);
+        }
+
+        while(true) {
+            token op = this->lexer->next_token_with_skip();
+            if (op.get_type() != token_type::ADD && op.get_type() != token_type::SUB) {
+                break;
+            }
+
+            if (
+                    this->lexer->get_now_token().get_type() == token_type::ROUND_BRACKET_OPEN ||
+                    this->lexer->get_now_token().get_type() == token_type::ADD ||
+                    this->lexer->get_now_token().get_type() == token_type::SUB ||
+                    this->lexer->get_now_token().get_type() == token_type::NOT ||
+                    this->lexer->get_now_token().get_type() == token_type::INT_CONST ||
+                    this->lexer->get_now_token().get_type() == token_type::IDENT
+                    ) {
+                this->mul_exp(is_only_lval);
+            }
+        }
+    }
+
+    void mul_exp(bool &is_only_lval) {
+        if (
+                this->lexer->get_now_token().get_type() == token_type::ROUND_BRACKET_OPEN ||
+                this->lexer->get_now_token().get_type() == token_type::ADD ||
+                this->lexer->get_now_token().get_type() == token_type::SUB ||
+                this->lexer->get_now_token().get_type() == token_type::NOT ||
+                this->lexer->get_now_token().get_type() == token_type::INT_CONST ||
+                this->lexer->get_now_token().get_type() == token_type::IDENT
+                ) {
+            this->unary_exp(is_only_lval);
+        }
+
+        while(true) {
+            token op = this->lexer->next_token_with_skip();
+            if (
+                    op.get_type() != token_type::MUL && op.get_type() != token_type::DIV &&
+                    op.get_type() != token_type::MOD
+            ) {
+                break;
+            }
+
+            if (
+                    this->lexer->get_now_token().get_type() == token_type::ROUND_BRACKET_OPEN ||
+                    this->lexer->get_now_token().get_type() == token_type::ADD ||
+                    this->lexer->get_now_token().get_type() == token_type::SUB ||
+                    this->lexer->get_now_token().get_type() == token_type::NOT ||
+                    this->lexer->get_now_token().get_type() == token_type::INT_CONST ||
+                    this->lexer->get_now_token().get_type() == token_type::IDENT
+                    ) {
+                this->unary_exp(is_only_lval);
+            }
+        }
+    }
+
+    void unary_exp(bool &is_only_lval) {
         // TODO
     }
 
-    void cond() {
+
+        void cond() {
         // TODO
     }
 
