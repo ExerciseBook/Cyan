@@ -350,7 +350,7 @@ public:
     void block_item() {
         if (this->lexer->get_now_token().get_type() == token_type::CONST ||
             this->lexer->get_now_token().get_type() == token_type::INT) {
-            this->stmt();
+            this->decl();
         } else {
             this->stmt();
         }
@@ -371,6 +371,19 @@ public:
             // TODO
             // stat -> lVal '=' exp ';'
             // stat -> exp? ';'
+            this->exp();
+        } if (this->lexer->get_now_token().get_type() == token_type::ROUND_BRACKET_OPEN) {
+            this->exp();
+        } if (this->lexer->get_now_token().get_type() == token_type::ADD) {
+            this->exp();
+        } if (this->lexer->get_now_token().get_type() == token_type::SUB) {
+            this->exp();
+        } if (this->lexer->get_now_token().get_type() == token_type::NOT) {
+            this->exp();
+        } if (this->lexer->get_now_token().get_type() == token_type::INT_CONST) {
+            this->exp();
+        }  if (this->lexer->get_now_token().get_type() == token_type::SEMICOLON) {
+
         } else if (this->lexer->get_now_token().get_type() == token_type::PARENTHESES_OPEN) {
             this->block$2();
         } else if (this->lexer->get_now_token().get_type() == token_type::IF) {
@@ -398,12 +411,14 @@ public:
             this->lexer->get_now_token().assert(token_type::ROUND_BRACKET_CLOSE, L")");
 
             this->stmt();
-        } else if (this->lexer->get_now_token().get_type() == token_type::WHILE) {
+        } else if (this->lexer->get_now_token().get_type() == token_type::BREAK) {
             this->lexer->next_token_with_skip();
             this->lexer->get_now_token().assert(token_type::SEMICOLON, L";");
+            this->lexer->next_token_with_skip();
         } else if (this->lexer->get_now_token().get_type() == token_type::CONTINUE) {
             this->lexer->next_token_with_skip();
             this->lexer->get_now_token().assert(token_type::SEMICOLON, L";");
+            this->lexer->next_token_with_skip();
         } else if (this->lexer->get_now_token().get_type() == token_type::RETURN) {
             // TODO
             this->lexer->next_token_with_skip();
@@ -413,6 +428,7 @@ public:
             }
 
             this->lexer->get_now_token().assert(token_type::SEMICOLON, L";");
+            this->lexer->next_token_with_skip();
         }
     }
 
