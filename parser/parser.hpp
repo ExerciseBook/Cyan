@@ -395,27 +395,32 @@ public:
             this->block$2();
         } else if (this->lexer->get_now_token().get_type() == token_type::IF) {
             this->lexer->next_token_with_skip();
+
             this->lexer->get_now_token().assert(token_type::ROUND_BRACKET_OPEN, L"(");
+            this->lexer->next_token_with_skip();
 
             this->cond();
 
-            this->lexer->next_token_with_skip();
             this->lexer->get_now_token().assert(token_type::ROUND_BRACKET_CLOSE, L")");
+            this->lexer->next_token_with_skip();
 
             this->stmt();
 
-            this->lexer->next_token_with_skip();
             if (this->lexer->get_now_token().get_type() == token_type::ELSE) {
+                this->lexer->next_token_with_skip();
+
                 this->stmt();
             }
         } else if (this->lexer->get_now_token().get_type() == token_type::WHILE) {
             this->lexer->next_token_with_skip();
+
             this->lexer->get_now_token().assert(token_type::ROUND_BRACKET_OPEN, L"(");
+            this->lexer->next_token_with_skip();
 
             this->cond();
 
-            this->lexer->next_token_with_skip();
             this->lexer->get_now_token().assert(token_type::ROUND_BRACKET_CLOSE, L")");
+            this->lexer->next_token_with_skip();
 
             this->stmt();
         } else if (this->lexer->get_now_token().get_type() == token_type::BREAK) {
@@ -579,9 +584,11 @@ public:
         if (this->lexer->get_now_token().get_type() == token_type::ROUND_BRACKET_OPEN) {
             is_only_lval = false;
             token first = this->lexer->get_now_token();
+            this->lexer->next_token_with_skip();
             this->exp();
             token third = this->lexer->get_now_token();
             third.assert(token_type::ROUND_BRACKET_CLOSE, L")");
+            this->lexer->next_token_with_skip();
         } else if (this->lexer->get_now_token().get_type() == token_type::IDENT) {
             is_only_lval = is_only_lval & true;
             this->l_val();
@@ -730,7 +737,7 @@ public:
         while (true) {
             token op = this->lexer->get_now_token();
             if (
-                    op.get_type() != token_type::ADD && op.get_type() != token_type::EQUAL ||
+                    op.get_type() != token_type::ADD && op.get_type() != token_type::EQUAL &&
                     op.get_type() != token_type::ADD && op.get_type() != token_type::NOTEQUAL
                 ) {
                 break;
@@ -774,9 +781,9 @@ public:
         while (true) {
             token op = this->lexer->get_now_token();
             if (
-                    op.get_type() != token_type::ADD && op.get_type() != token_type::LESS ||
-                    op.get_type() != token_type::ADD && op.get_type() != token_type::LESS_OR_EQUAL ||
-                    op.get_type() != token_type::ADD && op.get_type() != token_type::GREATER_OR_EQUAL ||
+                    op.get_type() != token_type::ADD && op.get_type() != token_type::LESS &&
+                    op.get_type() != token_type::ADD && op.get_type() != token_type::LESS_OR_EQUAL &&
+                    op.get_type() != token_type::ADD && op.get_type() != token_type::GREATER_OR_EQUAL &&
                     op.get_type() != token_type::ADD && op.get_type() != token_type::GREATER
                 ) {
                 break;
