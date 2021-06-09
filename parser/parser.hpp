@@ -63,6 +63,7 @@ public:
     void const_decl() {
         token const_token = lexer->get_now_token();
         const_token.assert(token_type::CONST, L"CONST");
+        lexer->next_token_with_skip();
 
         this->b_type();
         this->const_def();
@@ -79,24 +80,27 @@ public:
     }
 
     void b_type() {
-        token type = lexer->next_token_with_skip();
+        token type = lexer->get_now_token();
         type.assert(token_type::INT, L"INT");
+        lexer->next_token_with_skip();
     }
 
     void const_def() {
-        token id = lexer->next_token_with_skip();
+        token id = lexer->get_now_token();
         id.assert(token_type::IDENT, L"IDENT");
+        lexer->next_token_with_skip();
 
         while (true) {
-            token now = lexer->next_token_with_skip();
+            token now = lexer->get_now_token();
             if (now.get_type() == token_type::ASSIGNMENT_SYMBOL) {
                 lexer->next_token_with_skip();
                 break;
             } else if (now.get_type() == token_type::SQUARE_BRACKET_OPEN) {
                 lexer->next_token_with_skip();
                 this->const_exp();
-                token square_bracket_close = lexer->next_token_with_skip();
+                token square_bracket_close = lexer->get_now_token();
                 square_bracket_close.assert(token_type::SQUARE_BRACKET_CLOSE, L"]");
+                lexer->next_token_with_skip();
             } else {
                 now.error(L"[, =");
             }
@@ -110,13 +114,16 @@ public:
     }
 
     void const_init_val() {
-        token array_start = lexer->next_token_with_skip();
+        token array_start = lexer->get_now_token();
         if (array_start.get_type() == token_type::PARENTHESES_OPEN) {
+            lexer->next_token_with_skip();
+
             // { }
             // { constInitVal (, constInitVal)* }
             while (true) {
                 this->const_init_val();
                 if (this->lexer->get_now_token().get_type() == token_type::COMMA) {
+                    lexer->next_token_with_skip();
                     // next element
                 } else if (this->lexer->get_now_token().get_type() == token_type::PARENTHESES_CLOSE) {
                     this->lexer->next_token_with_skip();
@@ -191,7 +198,7 @@ public:
         if (next.get_type() == token_type::ASSIGNMENT_SYMBOL) {
             lexer->next_token_with_skip(); // 吃掉 =
             this->init_val();
-            next = lexer->next_token_with_skip();
+            next = lexer->get_now_token();
         }
 
         if (next.get_type() == token_type::COMMA) {
@@ -232,7 +239,7 @@ public:
         if (next.get_type() == token_type::ASSIGNMENT_SYMBOL) {
             lexer->next_token_with_skip(); // 吃掉 =
             this->init_val();
-            next = lexer->next_token_with_skip();
+            next = lexer->get_now_token();
         }
 
         if (next.get_type() == token_type::COMMA) {
@@ -259,6 +266,7 @@ public:
                     lexer->next_token_with_skip();
                     // next element
                 } else if (split.get_type() == token_type::PARENTHESES_CLOSE) {
+                    lexer->next_token_with_skip();
                     break;
                 }
             }
