@@ -441,7 +441,7 @@ public:
             this->lexer->next_token_with_skip();
 
             this->stmt();
-        } else if (this->lexer->get_now_token().get_type() == token_type::BREAK) {
+        } else if (this->lexer->get_now_token().get_type() == token_type::BREAK) { // NOLINT(bugprone-branch-clone)
             this->lexer->next_token_with_skip();
             this->lexer->get_now_token().assert(token_type::SEMICOLON, L";");
             this->lexer->next_token_with_skip();
