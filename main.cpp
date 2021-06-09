@@ -5,7 +5,7 @@
 #include "visitor/sysy_visitor.hpp"
 
 void run_test(const std::filesystem::path& case_path) {
-    std::wcout << L"Now running case " << case_path.native() << std::endl;
+    std::wcout << "\u001b[0m" << L"Now running case " << case_path.native() << std::endl;
 
     std::wifstream myfile;
     myfile.open(case_path);
@@ -17,7 +17,7 @@ void run_test(const std::filesystem::path& case_path) {
         _parser.comp_unit();
     }
     catch (token_unexpected_exception &e) {
-        std::wcout << e.get_message() << std::endl;
+        std::wcout << "\u001b[31m" << e.get_message() << std::endl;
     }
     myfile.close();
 }
@@ -37,7 +37,6 @@ int run_test_suite(const std::filesystem::path& test_cases_path) {
 }
 
 int main(int argc, char *argv[]) {
-//    run_test("../cases/section1/functional_test/15_array_test3.sy");
 
     run_test_suite("../cases/section1/functional_test");
     run_test_suite("../cases/section1/performance_test");

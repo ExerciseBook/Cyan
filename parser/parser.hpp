@@ -167,6 +167,7 @@ public:
                 this->lexer->get_now_token().error(L"COMMA");
             }
 
+            this->lexer->next_token_with_skip();
             this->var_def();
         }
     }
@@ -219,19 +220,21 @@ public:
         // b ,
         // b ;
 
-        token id = lexer->next_token_with_skip();
+        token id = lexer->get_now_token();
         id.assert(token_type::IDENT, L"IDENT");
 
         token next = lexer->next_token_with_skip();
         if (next.get_type() == token_type::SQUARE_BRACKET_OPEN) {
             // ([ const_exp ])+
 
-            // [ 被吃了
+            lexer->next_token_with_skip();
 
             while (true) {
                 this->const_exp();                          // 吃掉 const_exp
-                /* next = */ lexer->next_token_with_skip();       // 吃掉 ]
-                next = lexer->next_token_with_skip();       // 拿出下一个
+                next = lexer->get_now_token();       // 吃掉 ]
+                next.assert(token_type::SQUARE_BRACKET_CLOSE, L"]");
+
+                next = lexer->next_token_with_skip();
                 if (next.get_type() != token_type::SQUARE_BRACKET_OPEN) break;
             }
         }
@@ -258,6 +261,11 @@ public:
         if (array_start.get_type() == token_type::PARENTHESES_OPEN) {
             lexer->next_token_with_skip();
             // { }
+            if (lexer->get_now_token().get_type() == token_type::PARENTHESES_CLOSE) {
+                lexer->next_token_with_skip();
+                return;
+            }
+
             // { constInitVal (, constInitVal)* }
             while (true) {
                 this->init_val();
@@ -319,13 +327,15 @@ public:
             return;
         }
 
-        // 判断掉多个 [ exp ]，最后以 ） 结束
+        // 判断掉多个 [ exp ]，最后以 ) 或 , 结束
         next = this->lexer->next_token_with_skip();
-        while (next.get_type() != token_type::ROUND_BRACKET_CLOSE) {
+        while (next.get_type() != token_type::ROUND_BRACKET_CLOSE && next.get_type() != token_type::COMMA) {
             next.assert(token_type::SQUARE_BRACKET_OPEN, L"[");
-            this->exp();
-            token square_close = this->lexer->next_token_with_skip();
+            this->lexer->next_token_with_skip();
 
+            this->exp();
+            token square_close = this->lexer->get_now_token();
+            square_close.assert(token_type::SQUARE_BRACKET_CLOSE, L"]");
             next = this->lexer->next_token_with_skip();
         }
     }
