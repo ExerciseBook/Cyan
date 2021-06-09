@@ -603,7 +603,143 @@ public:
     }
 
     void cond() {
-        // TODO
+        this->l_or_exp();
+    }
+
+    void l_or_exp() {
+        if (
+                this->lexer->get_now_token().get_type() == token_type::ROUND_BRACKET_OPEN ||
+                this->lexer->get_now_token().get_type() == token_type::ADD ||
+                this->lexer->get_now_token().get_type() == token_type::SUB ||
+                this->lexer->get_now_token().get_type() == token_type::NOT ||
+                this->lexer->get_now_token().get_type() == token_type::INT_CONST ||
+                this->lexer->get_now_token().get_type() == token_type::IDENT
+                ) {
+            this->l_and_exp();
+        }
+
+        while (true) {
+            token op = this->lexer->get_now_token();
+            if (op.get_type() != token_type::ADD && op.get_type() != token_type::OR) {
+                break;
+            }
+
+            this->lexer->next_token_with_skip();
+            if (
+                    this->lexer->get_now_token().get_type() == token_type::ROUND_BRACKET_OPEN ||
+                    this->lexer->get_now_token().get_type() == token_type::ADD ||
+                    this->lexer->get_now_token().get_type() == token_type::SUB ||
+                    this->lexer->get_now_token().get_type() == token_type::NOT ||
+                    this->lexer->get_now_token().get_type() == token_type::INT_CONST ||
+                    this->lexer->get_now_token().get_type() == token_type::IDENT
+                    ) {
+                this->l_and_exp();
+            }
+        }
+    }
+
+    void l_and_exp() {
+        if (
+                this->lexer->get_now_token().get_type() == token_type::ROUND_BRACKET_OPEN ||
+                this->lexer->get_now_token().get_type() == token_type::ADD ||
+                this->lexer->get_now_token().get_type() == token_type::SUB ||
+                this->lexer->get_now_token().get_type() == token_type::NOT ||
+                this->lexer->get_now_token().get_type() == token_type::INT_CONST ||
+                this->lexer->get_now_token().get_type() == token_type::IDENT
+                ) {
+            this->eq_exp();
+        }
+
+        while (true) {
+            token op = this->lexer->get_now_token();
+            if (op.get_type() != token_type::ADD && op.get_type() != token_type::AND) {
+                break;
+            }
+
+            this->lexer->next_token_with_skip();
+            if (
+                    this->lexer->get_now_token().get_type() == token_type::ROUND_BRACKET_OPEN ||
+                    this->lexer->get_now_token().get_type() == token_type::ADD ||
+                    this->lexer->get_now_token().get_type() == token_type::SUB ||
+                    this->lexer->get_now_token().get_type() == token_type::NOT ||
+                    this->lexer->get_now_token().get_type() == token_type::INT_CONST ||
+                    this->lexer->get_now_token().get_type() == token_type::IDENT
+                    ) {
+                this->eq_exp();
+            }
+        }
+    }
+
+    void eq_exp() {
+        if (
+                this->lexer->get_now_token().get_type() == token_type::ROUND_BRACKET_OPEN ||
+                this->lexer->get_now_token().get_type() == token_type::ADD ||
+                this->lexer->get_now_token().get_type() == token_type::SUB ||
+                this->lexer->get_now_token().get_type() == token_type::NOT ||
+                this->lexer->get_now_token().get_type() == token_type::INT_CONST ||
+                this->lexer->get_now_token().get_type() == token_type::IDENT
+                ) {
+            this->rel_exp();
+        }
+
+        while (true) {
+            token op = this->lexer->get_now_token();
+            if (
+                    op.get_type() != token_type::ADD && op.get_type() != token_type::EQUAL ||
+                    op.get_type() != token_type::ADD && op.get_type() != token_type::NOTEQUAL
+                ) {
+                break;
+            }
+
+            this->lexer->next_token_with_skip();
+            if (
+                    this->lexer->get_now_token().get_type() == token_type::ROUND_BRACKET_OPEN ||
+                    this->lexer->get_now_token().get_type() == token_type::ADD ||
+                    this->lexer->get_now_token().get_type() == token_type::SUB ||
+                    this->lexer->get_now_token().get_type() == token_type::NOT ||
+                    this->lexer->get_now_token().get_type() == token_type::INT_CONST ||
+                    this->lexer->get_now_token().get_type() == token_type::IDENT
+                    ) {
+                this->rel_exp();
+            }
+        }
+    }
+
+    void rel_exp() {
+        if (
+                this->lexer->get_now_token().get_type() == token_type::ROUND_BRACKET_OPEN ||
+                this->lexer->get_now_token().get_type() == token_type::ADD ||
+                this->lexer->get_now_token().get_type() == token_type::SUB ||
+                this->lexer->get_now_token().get_type() == token_type::NOT ||
+                this->lexer->get_now_token().get_type() == token_type::INT_CONST ||
+                this->lexer->get_now_token().get_type() == token_type::IDENT
+                ) {
+            this->add_exp();
+        }
+
+        while (true) {
+            token op = this->lexer->get_now_token();
+            if (
+                    op.get_type() != token_type::ADD && op.get_type() != token_type::LESS ||
+                    op.get_type() != token_type::ADD && op.get_type() != token_type::LESS_OR_EQUAL ||
+                    op.get_type() != token_type::ADD && op.get_type() != token_type::GREATER_OR_EQUAL ||
+                    op.get_type() != token_type::ADD && op.get_type() != token_type::GREATER
+                ) {
+                break;
+            }
+
+            this->lexer->next_token_with_skip();
+            if (
+                    this->lexer->get_now_token().get_type() == token_type::ROUND_BRACKET_OPEN ||
+                    this->lexer->get_now_token().get_type() == token_type::ADD ||
+                    this->lexer->get_now_token().get_type() == token_type::SUB ||
+                    this->lexer->get_now_token().get_type() == token_type::NOT ||
+                    this->lexer->get_now_token().get_type() == token_type::INT_CONST ||
+                    this->lexer->get_now_token().get_type() == token_type::IDENT
+                    ) {
+                this->add_exp();
+            }
+        }
     }
 
     void number() {
