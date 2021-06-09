@@ -42,7 +42,7 @@ public:
     token next_token() {
         auto _now_char = get_next_char();
         if (_now_char == nullptr) {
-            return {token_type::END_OF_FILE, now_line, now_column + 1};
+            return {token_type::END_OF_FILE, now_position, now_line, now_column + 1};
         }
 
         token ret;
@@ -55,71 +55,71 @@ public:
                 if ((next_char != nullptr) && (*next_char == '\n')) {
                     get_next_char();
                 }
-                ret = token(token_type::WHITE_SPACE, _start_line, _start_column, *_now_char);
+                ret = token(token_type::WHITE_SPACE, now_position, _start_line, _start_column, *_now_char);
                 now_line++;
                 now_column = 0;
                 break;
             }
             case '\n' : {
-                ret = token(token_type::WHITE_SPACE, _start_line, _start_column, *_now_char);
+                ret = token(token_type::WHITE_SPACE, now_position, _start_line, _start_column, *_now_char);
                 now_line++;
                 now_column = 0;
                 break;
             }
             case '\t' :
             case ' ' : {
-                ret = token(token_type::WHITE_SPACE, _start_line, _start_column, *_now_char);
+                ret = token(token_type::WHITE_SPACE, now_position, _start_line, _start_column, *_now_char);
                 break;
             }
             case ',' : {
-                ret = token(token_type::COMMA, _start_line, _start_column, *_now_char);
+                ret = token(token_type::COMMA, now_position, _start_line, _start_column, *_now_char);
                 break;
             }
             case ';' : {
-                ret = token(token_type::SEMICOLON, _start_line, _start_column, *_now_char);
+                ret = token(token_type::SEMICOLON, now_position, _start_line, _start_column, *_now_char);
                 break;
             }
             case '[' : {
-                ret = token(token_type::SQUARE_BRACKET_OPEN, _start_line, _start_column, *_now_char);
+                ret = token(token_type::SQUARE_BRACKET_OPEN, now_position, _start_line, _start_column, *_now_char);
                 break;
             }
             case ']' : {
-                ret = token(token_type::SQUARE_BRACKET_CLOSE, _start_line, _start_column, *_now_char);
+                ret = token(token_type::SQUARE_BRACKET_CLOSE, now_position, _start_line, _start_column, *_now_char);
                 break;
             }
             case '{' : {
-                ret = token(token_type::PARENTHESES_OPEN, _start_line, _start_column, *_now_char);
+                ret = token(token_type::PARENTHESES_OPEN, now_position, _start_line, _start_column, *_now_char);
                 break;
             }
             case '}' : {
-                ret = token(token_type::PARENTHESES_CLOSE, _start_line, _start_column, *_now_char);
+                ret = token(token_type::PARENTHESES_CLOSE, now_position, _start_line, _start_column, *_now_char);
                 break;
             }
             case '(' : {
-                ret = token(token_type::ROUND_BRACKET_OPEN, _start_line, _start_column, *_now_char);
+                ret = token(token_type::ROUND_BRACKET_OPEN, now_position, _start_line, _start_column, *_now_char);
                 break;
             }
             case ')' : {
-                ret = token(token_type::ROUND_BRACKET_CLOSE, _start_line, _start_column, *_now_char);
+                ret = token(token_type::ROUND_BRACKET_CLOSE, now_position, _start_line, _start_column, *_now_char);
                 break;
             }
             case '=' : {
                 if ((next_char != nullptr) && (*next_char == '=')) {
-                    ret = token(token_type::EQUAL, _start_line, _start_column, L"==");
+                    ret = token(token_type::EQUAL, now_position, _start_line, _start_column, L"==");
                     free(next_char);
                     get_next_char();
                 } else {
-                    ret = token(token_type::ASSIGNMENT_SYMBOL, _start_line, _start_column, *_now_char);
+                    ret = token(token_type::ASSIGNMENT_SYMBOL, now_position, _start_line, _start_column, *_now_char);
                 }
                 break;
             }
             case '*' : {
-                ret = token(token_type::MUL, _start_line, _start_column, *_now_char);
+                ret = token(token_type::MUL, now_position, _start_line, _start_column, *_now_char);
                 break;
             }
             case '/' : {
                 if (next_char == nullptr) {
-                    ret = token(token_type::DIV, _start_line, _start_column, *_now_char);
+                    ret = token(token_type::DIV, now_position, _start_line, _start_column, *_now_char);
                 } else if (*next_char == '/') {
                     // 单行注释
 
@@ -141,7 +141,7 @@ public:
                         free(now_char);
                     }
 
-                    ret = token(token_type::COMMENT_LINE, _start_line, _start_column, text);
+                    ret = token(token_type::COMMENT_LINE, now_position, _start_line, _start_column, text);
                 } else if (*next_char == '*') {
                     // 多行注释
                     std::wstring text = L"/";
@@ -194,57 +194,57 @@ public:
                     get_next_char();
                     text += L"*/";
 
-                    ret = token(token_type::COMMENT_BLOCK, _start_line, _start_column, text);
+                    ret = token(token_type::COMMENT_BLOCK, now_position, _start_line, _start_column, text);
                 } else {
-                    ret = token(token_type::DIV, _start_line, _start_column, *_now_char);
+                    ret = token(token_type::DIV, now_position, _start_line, _start_column, *_now_char);
                 }
                 break;
             }
             case '+' : {
-                ret = token(token_type::ADD, _start_line, _start_column, *_now_char);
+                ret = token(token_type::ADD, now_position, _start_line, _start_column, *_now_char);
                 break;
             }
             case '-' : {
-                ret = token(token_type::SUB, _start_line, _start_column, *_now_char);
+                ret = token(token_type::SUB, now_position, _start_line, _start_column, *_now_char);
                 break;
             }
             case '%' : {
-                ret = token(token_type::MOD, _start_line, _start_column, *_now_char);
+                ret = token(token_type::MOD, now_position, _start_line, _start_column, *_now_char);
                 break;
             }
             case '<' : {
                 if (next_char == nullptr) {
-                    ret = token(token_type::LESS, _start_line, _start_column, *_now_char);
+                    ret = token(token_type::LESS, now_position, _start_line, _start_column, *_now_char);
                 } else if (*next_char == '=') {
                     free(next_char);
                     get_next_char();
-                    ret = token(token_type::LESS_OR_EQUAL, _start_line, _start_column, L"<=");
+                    ret = token(token_type::LESS_OR_EQUAL, now_position, _start_line, _start_column, L"<=");
                 } else {
-                    ret = token(token_type::LESS, _start_line, _start_column, *_now_char);
+                    ret = token(token_type::LESS, now_position, _start_line, _start_column, *_now_char);
                 }
                 break;
             }
             case '>' : {
                 if (next_char == nullptr) {
-                    ret = token(token_type::GREATER, _start_line, _start_column, *_now_char);
+                    ret = token(token_type::GREATER, now_position, _start_line, _start_column, *_now_char);
                 } else if (*next_char == '=') {
                     free(next_char);
                     get_next_char();
-                    ret = token(token_type::GREATER_OR_EQUAL, _start_line, _start_column, L">=");
+                    ret = token(token_type::GREATER_OR_EQUAL, now_position, _start_line, _start_column, L">=");
                 } else {
-                    ret = token(token_type::GREATER, _start_line, _start_column, *_now_char);
+                    ret = token(token_type::GREATER, now_position, _start_line, _start_column, *_now_char);
                 }
                 break;
             }
             case '!' : {
                 if (next_char == nullptr) {
-                    ret = token(token_type::NOT, _start_line, _start_column, *_now_char);
+                    ret = token(token_type::NOT, now_position, _start_line, _start_column, *_now_char);
                 } else if (*next_char == '=') {
                     free(next_char);
                     get_next_char();
-                    ret = token(token_type::NOTEQUAL, _start_line, _start_column, L"!=");
+                    ret = token(token_type::NOTEQUAL, now_position, _start_line, _start_column, L"!=");
                 } else {
-                    ret = token(token_type::NOT, _start_line, _start_column, *_now_char);
+                    ret = token(token_type::NOT, now_position, _start_line, _start_column, *_now_char);
                 }
                 break;
             }
@@ -255,7 +255,7 @@ public:
                 } else if (*next_char == '&') {
                     free(next_char);
                     get_next_char();
-                    ret = token(token_type::AND, _start_line, _start_column, L"&&");
+                    ret = token(token_type::AND, now_position, _start_line, _start_column, L"&&");
                 } else {
                     free(_now_char);
                     throw token_unexpected_exception(now_line, now_column, L"&&", L"&");
@@ -269,7 +269,7 @@ public:
                 } else if (*next_char == '|') {
                     free(next_char);
                     get_next_char();
-                    ret = token(token_type::OR, _start_line, _start_column, L"||");
+                    ret = token(token_type::OR, now_position, _start_line, _start_column, L"||");
                 } else {
                     free(_now_char);
                     throw token_unexpected_exception(now_line, now_column, L"||", L"|");
@@ -279,7 +279,7 @@ public:
             case '0':
                 if (next_char == nullptr) {
                     // 0
-                    ret = token(token_type::INT_CONST, _start_line, _start_column, L"0");
+                    ret = token(token_type::INT_CONST, now_position, _start_line, _start_column, L"0");
                 } else if ((*next_char == 'x') || (*next_char == 'X')) {
                     std::wstring text = L"0";
                     text += *next_char;
@@ -307,7 +307,7 @@ public:
                         throw token_unexpected_exception(now_line, now_column, L"hex integer", L"invalid found");
                     }
 
-                    ret = token(token_type::INT_CONST, _start_line, _start_column, text);
+                    ret = token(token_type::INT_CONST, now_position, _start_line, _start_column, text);
                 } else if (('0' <= (*next_char)) && ((*next_char) <= '7')) {
                     std::wstring text = L"0";
                     text += *next_char;
@@ -335,10 +335,10 @@ public:
                         }
                     }
 
-                    ret = token(token_type::INT_CONST, _start_line, _start_column, text);
+                    ret = token(token_type::INT_CONST, now_position, _start_line, _start_column, text);
                 } else {
                     // 0
-                    ret = token(token_type::INT_CONST, _start_line, _start_column, L"0");
+                    ret = token(token_type::INT_CONST, now_position, _start_line, _start_column, L"0");
                 }
                 break;
             case '1':
@@ -374,12 +374,12 @@ public:
                     }
                 }
 
-                ret = token(token_type::INT_CONST, _start_line, _start_column, text);
+                ret = token(token_type::INT_CONST, now_position, _start_line, _start_column, text);
 
                 break;
             }
             case '\0' : {
-                ret = token(token_type::END_OF_FILE, _start_line, _start_column, *_now_char);
+                ret = token(token_type::END_OF_FILE, now_position, _start_line, _start_column, *_now_char);
                 break;
             }
             default: {
@@ -409,25 +409,25 @@ public:
                 }
 
                 if (text == L"const") {
-                    ret = token(token_type::CONST, _start_line, _start_column, text);
+                    ret = token(token_type::CONST, now_position, _start_line, _start_column, text);
                 } else if (text == L"if") {
-                    ret = token(token_type::IF, _start_line, _start_column, text);
+                    ret = token(token_type::IF, now_position, _start_line, _start_column, text);
                 } else if (text == L"else") {
-                    ret = token(token_type::ELSE, _start_line, _start_column, text);
+                    ret = token(token_type::ELSE, now_position, _start_line, _start_column, text);
                 } else if (text == L"while") {
-                    ret = token(token_type::WHILE, _start_line, _start_column, text);
+                    ret = token(token_type::WHILE, now_position, _start_line, _start_column, text);
                 } else if (text == L"break") {
-                    ret = token(token_type::BREAK, _start_line, _start_column, text);
+                    ret = token(token_type::BREAK, now_position, _start_line, _start_column, text);
                 } else if (text == L"continue") {
-                    ret = token(token_type::CONTINUE, _start_line, _start_column, text);
+                    ret = token(token_type::CONTINUE, now_position, _start_line, _start_column, text);
                 } else if (text == L"return") {
-                    ret = token(token_type::RETURN, _start_line, _start_column, text);
+                    ret = token(token_type::RETURN, now_position, _start_line, _start_column, text);
                 } else if (text == L"int") {
-                    ret = token(token_type::INT, _start_line, _start_column, text);
+                    ret = token(token_type::INT, now_position, _start_line, _start_column, text);
                 } else if (text == L"void") {
-                    ret = token(token_type::VOID, _start_line, _start_column, text);
+                    ret = token(token_type::VOID, now_position, _start_line, _start_column, text);
                 } else {
-                    ret = token(token_type::IDENT, _start_line, _start_column, text);
+                    ret = token(token_type::IDENT, now_position, _start_line, _start_column, text);
                 }
 
                 break;

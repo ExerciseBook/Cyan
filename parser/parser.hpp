@@ -450,6 +450,7 @@ public:
     }
 
     void add_exp(bool &is_only_lval) {
+        token p1 = this->lexer->get_now_token();
         if (
                 this->lexer->get_now_token().get_type() == token_type::ROUND_BRACKET_OPEN ||
                 this->lexer->get_now_token().get_type() == token_type::ADD ||
@@ -460,6 +461,10 @@ public:
                 ) {
             this->mul_exp(is_only_lval);
         }
+        token p2 = this->lexer->get_now_token();
+        if (p1.get_position() == p2.get_position()) {
+            throw token_unexpected_exception(p1.get_line(), p1.get_column(), L"(, +, -, !, NUMBER, IDENT", token_type_get_name(p1.get_type()));
+        }
 
         while (true) {
             token op = this->lexer->get_now_token();
@@ -467,7 +472,7 @@ public:
                 break;
             }
 
-            this->lexer->next_token_with_skip();
+            p1 = this->lexer->next_token_with_skip();
             if (
                     this->lexer->get_now_token().get_type() == token_type::ROUND_BRACKET_OPEN ||
                     this->lexer->get_now_token().get_type() == token_type::ADD ||
@@ -478,10 +483,15 @@ public:
                     ) {
                 this->mul_exp(is_only_lval);
             }
+            p2 = this->lexer->get_now_token();
+            if (p1.get_position() == p2.get_position()) {
+                throw token_unexpected_exception(p1.get_line(), p1.get_column(), L"(, +, -, !, NUMBER, IDENT", token_type_get_name(p1.get_type()));
+            }
         }
     }
 
     void mul_exp(bool &is_only_lval) {
+        token p1 = this->lexer->get_now_token();
         if (
                 this->lexer->get_now_token().get_type() == token_type::ROUND_BRACKET_OPEN ||
                 this->lexer->get_now_token().get_type() == token_type::ADD ||
@@ -491,6 +501,10 @@ public:
                 this->lexer->get_now_token().get_type() == token_type::IDENT
                 ) {
             this->unary_exp(is_only_lval);
+        }
+        token p2 = this->lexer->get_now_token();
+        if (p1.get_position() == p2.get_position()) {
+            throw token_unexpected_exception(p1.get_line(), p1.get_column(), L"(, +, -, !, NUMBER, IDENT", token_type_get_name(p1.get_type()));
         }
 
         while (true) {
@@ -502,7 +516,7 @@ public:
                 break;
             }
 
-            this->lexer->next_token_with_skip();
+            p1 = this->lexer->next_token_with_skip();
             if (
                     this->lexer->get_now_token().get_type() == token_type::ROUND_BRACKET_OPEN ||
                     this->lexer->get_now_token().get_type() == token_type::ADD ||
@@ -512,6 +526,10 @@ public:
                     this->lexer->get_now_token().get_type() == token_type::IDENT
                     ) {
                 this->unary_exp(is_only_lval);
+            }
+            p2 = this->lexer->get_now_token();
+            if (p1.get_position() == p2.get_position()) {
+                throw token_unexpected_exception(p1.get_line(), p1.get_column(), L"(, +, -, !, NUMBER, IDENT", token_type_get_name(p1.get_type()));
             }
         }
     }
@@ -607,6 +625,7 @@ public:
     }
 
     void l_or_exp() {
+        token p1 = this->lexer->get_now_token();
         if (
                 this->lexer->get_now_token().get_type() == token_type::ROUND_BRACKET_OPEN ||
                 this->lexer->get_now_token().get_type() == token_type::ADD ||
@@ -617,6 +636,10 @@ public:
                 ) {
             this->l_and_exp();
         }
+        token p2 = this->lexer->get_now_token();
+        if (p1.get_position() == p2.get_position()) {
+            throw token_unexpected_exception(p1.get_line(), p1.get_column(), L"(, +, -, !, NUMBER, IDENT", token_type_get_name(p1.get_type()));
+        }
 
         while (true) {
             token op = this->lexer->get_now_token();
@@ -624,7 +647,7 @@ public:
                 break;
             }
 
-            this->lexer->next_token_with_skip();
+            p1 = this->lexer->next_token_with_skip();
             if (
                     this->lexer->get_now_token().get_type() == token_type::ROUND_BRACKET_OPEN ||
                     this->lexer->get_now_token().get_type() == token_type::ADD ||
@@ -635,10 +658,15 @@ public:
                     ) {
                 this->l_and_exp();
             }
+            p2 = this->lexer->get_now_token();
+            if (p1.get_position() == p2.get_position()) {
+                throw token_unexpected_exception(p1.get_line(), p1.get_column(), L"(, +, -, !, NUMBER, IDENT", token_type_get_name(p1.get_type()));
+            }
         }
     }
 
     void l_and_exp() {
+        token p1 = this->lexer->get_now_token();
         if (
                 this->lexer->get_now_token().get_type() == token_type::ROUND_BRACKET_OPEN ||
                 this->lexer->get_now_token().get_type() == token_type::ADD ||
@@ -649,6 +677,10 @@ public:
                 ) {
             this->eq_exp();
         }
+        token p2 = this->lexer->get_now_token();
+        if (p1.get_position() == p2.get_position()) {
+            throw token_unexpected_exception(p1.get_line(), p1.get_column(), L"(, +, -, !, NUMBER, IDENT", token_type_get_name(p1.get_type()));
+        }
 
         while (true) {
             token op = this->lexer->get_now_token();
@@ -656,7 +688,7 @@ public:
                 break;
             }
 
-            this->lexer->next_token_with_skip();
+            p1 = this->lexer->next_token_with_skip();
             if (
                     this->lexer->get_now_token().get_type() == token_type::ROUND_BRACKET_OPEN ||
                     this->lexer->get_now_token().get_type() == token_type::ADD ||
@@ -667,10 +699,15 @@ public:
                     ) {
                 this->eq_exp();
             }
+            p2 = this->lexer->get_now_token();
+            if (p1.get_position() == p2.get_position()) {
+                throw token_unexpected_exception(p1.get_line(), p1.get_column(), L"(, +, -, !, NUMBER, IDENT", token_type_get_name(p1.get_type()));
+            }
         }
     }
 
     void eq_exp() {
+        token p1 = this->lexer->get_now_token();
         if (
                 this->lexer->get_now_token().get_type() == token_type::ROUND_BRACKET_OPEN ||
                 this->lexer->get_now_token().get_type() == token_type::ADD ||
@@ -680,6 +717,10 @@ public:
                 this->lexer->get_now_token().get_type() == token_type::IDENT
                 ) {
             this->rel_exp();
+        }
+        token p2 = this->lexer->get_now_token();
+        if (p1.get_position() == p2.get_position()) {
+            throw token_unexpected_exception(p1.get_line(), p1.get_column(), L"(, +, -, !, NUMBER, IDENT", token_type_get_name(p1.get_type()));
         }
 
         while (true) {
@@ -691,7 +732,7 @@ public:
                 break;
             }
 
-            this->lexer->next_token_with_skip();
+            p1 = this->lexer->next_token_with_skip();
             if (
                     this->lexer->get_now_token().get_type() == token_type::ROUND_BRACKET_OPEN ||
                     this->lexer->get_now_token().get_type() == token_type::ADD ||
@@ -702,10 +743,15 @@ public:
                     ) {
                 this->rel_exp();
             }
+            p2 = this->lexer->get_now_token();
+            if (p1.get_position() == p2.get_position()) {
+                throw token_unexpected_exception(p1.get_line(), p1.get_column(), L"(, +, -, !, NUMBER, IDENT", token_type_get_name(p1.get_type()));
+            }
         }
     }
 
     void rel_exp() {
+        token p1 = this->lexer->get_now_token();
         if (
                 this->lexer->get_now_token().get_type() == token_type::ROUND_BRACKET_OPEN ||
                 this->lexer->get_now_token().get_type() == token_type::ADD ||
@@ -715,6 +761,10 @@ public:
                 this->lexer->get_now_token().get_type() == token_type::IDENT
                 ) {
             this->add_exp();
+        }
+        token p2 = this->lexer->get_now_token();
+        if (p1.get_position() == p2.get_position()) {
+            throw token_unexpected_exception(p1.get_line(), p1.get_column(), L"(, +, -, !, NUMBER, IDENT", token_type_get_name(p1.get_type()));
         }
 
         while (true) {
@@ -728,7 +778,7 @@ public:
                 break;
             }
 
-            this->lexer->next_token_with_skip();
+            p1 = this->lexer->next_token_with_skip();
             if (
                     this->lexer->get_now_token().get_type() == token_type::ROUND_BRACKET_OPEN ||
                     this->lexer->get_now_token().get_type() == token_type::ADD ||
@@ -738,6 +788,10 @@ public:
                     this->lexer->get_now_token().get_type() == token_type::IDENT
                     ) {
                 this->add_exp();
+            }
+            p2 = this->lexer->get_now_token();
+            if (p1.get_position() == p2.get_position()) {
+                throw token_unexpected_exception(p1.get_line(), p1.get_column(), L"(, +, -, !, NUMBER, IDENT", token_type_get_name(p1.get_type()));
             }
         }
     }

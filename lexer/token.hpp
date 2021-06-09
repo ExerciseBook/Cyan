@@ -12,26 +12,29 @@
 
 class token {
 public:
-    token(token_type type = token_type::DEFAULT, int line = 0, int column = 0) {
+    token(token_type type = token_type::DEFAULT, int position = 0, int line = 0, int column = 0) {
         this->type = type;
         this->line = line;
         this->column = column;
+        this->position = position;
     }
 
-    token(token_type type, int line, int column, wchar_t text) {
+    token(token_type type, int position, int line, int column, wchar_t text) {
         this->type = type;
         this->line = line;
         this->column = column;
+        this->position = position;
 
         wchar_t arr[2] = {text, 0};
         this->text = std::wstring(arr);
     }
 
-    token(token_type type, int line, int column, std::wstring text) {
+    token(token_type type, int position, int line, int column, std::wstring text) {
         this->type = type;
         this->line = line;
         this->column = column;
         this->text = std::move(text);
+        this->position = position;
     }
 
     token_type get_type() const {
@@ -40,6 +43,10 @@ public:
 
     std::wstring get_type_name() const {
         return token_type_get_name(type);
+    }
+
+    int get_position() const {
+        return position;
     }
 
     int get_line() const {
@@ -68,6 +75,7 @@ private:
     token_type type;
     int line = 0;
     int column = 0;
+    int position = 0;
     std::wstring text;
 };
 
