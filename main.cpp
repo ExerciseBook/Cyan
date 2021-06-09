@@ -1,38 +1,39 @@
+#include<filesystem>
 #include <iostream>
 #include "lexer/lexer.hpp"
 #include "parser/parser.hpp"
 #include "visitor/sysy_visitor.hpp"
 
-int main() {
+void run_test(const std::filesystem::path& case_path) {
+    std::wcout << L"Now running case " << case_path.native() << std::endl;
 
     std::wifstream myfile;
-    myfile.open(R"(F:\File\src\AntlrTest\src\main\java\SysY\1.sysy)");
+    myfile.open(case_path);
 
     lexer _lexer = lexer(myfile);
-//    token t = _lexer.next_token();
-//    try {
-//        while (t.get_type() != token_type::END_OF_FILE) {
-//
-//            if (t.get_type() != token_type::DEFAULT)
-//                std::wcout << t.get_type_name() << " " << t.get_line() << " " << t.get_column() << " " << t.get_text()
-//                           << std::endl;
-//
-//            t = _lexer.next_token();
-//        }
-//    }
-//    catch (token_unexpected_exception &e) {
-//        std::wcout << e.get_message();
-//    }
-
     sysy_visitor visitor;
     try {
-
-        parser _parser = parser(&_lexer);
+        auto _parser = parser(&_lexer);
         _parser.comp_unit();
     }
     catch (token_unexpected_exception &e) {
-        std::wcout << e.get_message();
+        std::wcout << e.get_message() << std::endl;
     }
     myfile.close();
+}
+
+int main(int argc, char *argv[]) {
+    std::filesystem::path test_cases_path("../cases");
+    if (!std::filesystem::exists(test_cases_path)) {
+        return -1;
+    }
+
+    std::filesystem::directory_iterator entry(test_cases_path);
+    for (auto &i : entry) {
+        if (i.is_regular_file()) {
+            run_test(i);
+        }
+    }
+
     return 0;
 }
