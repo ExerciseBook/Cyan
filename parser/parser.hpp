@@ -357,22 +357,37 @@ public:
 
     void stmt() {
         if (this->lexer->get_now_token().get_type() == token_type::IDENT) {
-            // TODO
             // stat -> lVal '=' exp ';'
             // stat -> exp? ';'
-            this->exp();
-        } else if (this->lexer->get_now_token().get_type() == token_type::ROUND_BRACKET_OPEN) {
-            this->exp();
-        } else if (this->lexer->get_now_token().get_type() == token_type::ADD) {
-            this->exp();
-        } else if (this->lexer->get_now_token().get_type() == token_type::SUB) {
-            this->exp();
-        } else if (this->lexer->get_now_token().get_type() == token_type::NOT) {
-            this->exp();
-        } else if (this->lexer->get_now_token().get_type() == token_type::INT_CONST) {
-            this->exp();
-        } else if (this->lexer->get_now_token().get_type() == token_type::SEMICOLON) {
 
+            bool flag = true;
+            this->exp(flag);
+
+            if (flag) {
+                // TODO 拆解
+                // stat -> lVal '=' exp ';'
+                token assign = this->lexer->get_now_token();
+                assign.assert(token_type::ASSIGNMENT_SYMBOL, L"=");
+
+                this->exp();
+            }
+
+            token end = this->lexer->get_now_token();
+            end.assert(token_type::SEMICOLON, L";");
+            this->lexer->next_token_with_skip();
+        } else if (
+                this->lexer->get_now_token().get_type() == token_type::ROUND_BRACKET_OPEN ||
+                this->lexer->get_now_token().get_type() == token_type::ADD ||
+                this->lexer->get_now_token().get_type() == token_type::SUB ||
+                this->lexer->get_now_token().get_type() == token_type::NOT ||
+                this->lexer->get_now_token().get_type() == token_type::INT_CONST
+                ) {
+            this->exp();
+            token end = this->lexer->get_now_token();
+            end.assert(token_type::SEMICOLON, L";");
+            this->lexer->next_token_with_skip();
+        } else if (this->lexer->get_now_token().get_type() == token_type::SEMICOLON) {
+            this->lexer->next_token_with_skip();
         } else if (this->lexer->get_now_token().get_type() == token_type::PARENTHESES_OPEN) {
             this->block$2();
         } else if (this->lexer->get_now_token().get_type() == token_type::IF) {
@@ -409,7 +424,6 @@ public:
             this->lexer->get_now_token().assert(token_type::SEMICOLON, L";");
             this->lexer->next_token_with_skip();
         } else if (this->lexer->get_now_token().get_type() == token_type::RETURN) {
-            // TODO
             this->lexer->next_token_with_skip();
 
             if (this->lexer->get_now_token().get_type() != token_type::SEMICOLON) {
@@ -428,9 +442,6 @@ public:
 
     void exp(bool &is_only_lval) {
         this->add_exp(is_only_lval);
-        token end = this->lexer->get_now_token();
-        end.assert(token_type::SEMICOLON, L";");
-        this->lexer->next_token_with_skip();
     }
 
     void add_exp() {
@@ -509,10 +520,21 @@ public:
         if (
                 this->lexer->get_now_token().get_type() == token_type::ROUND_BRACKET_OPEN ||
                 this->lexer->get_now_token().get_type() == token_type::INT_CONST
-        ) {
+                ) {
             this->primary_exp(is_only_lval);
         } else if (this->lexer->get_now_token().get_type() == token_type::IDENT) {
-            // TODO
+            token now = this->lexer->get_now_token();
+            token next =  this->lexer->next_token_with_skip();
+
+            if (next.get_type() == token_type::ROUND_BRACKET_OPEN) {
+                token close = this->lexer->next_token_with_skip();
+                if (close.get_type() != token_type::ROUND_BRACKET_CLOSE) {
+                    this->func_rparam();
+                    close = this->lexer->next_token_with_skip();
+                }
+            } else {
+                this->primary_exp$2(is_only_lval, now);
+            }
         } else if (this->lexer->get_now_token().get_type() == token_type::ADD ||
                    this->lexer->get_now_token().get_type() == token_type::SUB ||
                    this->lexer->get_now_token().get_type() == token_type::NOT) {
@@ -520,6 +542,15 @@ public:
             token op = this->lexer->get_now_token();
             this->lexer->next_token_with_skip();
             this->unary_exp(is_only_lval);
+        }
+    }
+
+    void func_rparam() {
+        while (this->lexer->get_now_token().get_type() != token_type::ROUND_BRACKET_CLOSE) {
+            this->exp();
+            token split = this->lexer->get_now_token();
+            split.assert(token_type::COMMA, L",");
+            this->lexer->next_token_with_skip();
         }
     }
 
@@ -533,13 +564,33 @@ public:
         } else if (this->lexer->get_now_token().get_type() == token_type::IDENT) {
             is_only_lval = is_only_lval & true;
             this->l_val();
-        }  else if (this->lexer->get_now_token().get_type() == token_type::INT_CONST) {
+        } else if (this->lexer->get_now_token().get_type() == token_type::INT_CONST) {
             is_only_lval = false;
             this->number();
         }
     }
 
+    void primary_exp$2(bool &is_only_lval, const token &now) {
+        if (now.get_type() == token_type::ROUND_BRACKET_OPEN) {
+            is_only_lval = false;
+            token first = now;
+            this->exp();
+            token third = this->lexer->get_now_token();
+            third.assert(token_type::ROUND_BRACKET_CLOSE, L")");
+        } else if (now.get_type() == token_type::IDENT) {
+            is_only_lval = is_only_lval & true;
+            this->l_val$2(now);
+        } else if (now.get_type() == token_type::INT_CONST) {
+            is_only_lval = false;
+            this->number$2(now);
+        }
+    }
+
     void l_val() {
+        // TODO
+    }
+
+    void l_val$2(const token &now) {
         // TODO
     }
 
@@ -549,6 +600,11 @@ public:
 
     void number() {
         token number = this->lexer->get_now_token();
+        number.assert(token_type::INT_CONST, L"INT_CONST");
+        this->lexer->next_token_with_skip();
+    }
+
+    void number$2(const token &number) {
         number.assert(token_type::INT_CONST, L"INT_CONST");
         this->lexer->next_token_with_skip();
     }
