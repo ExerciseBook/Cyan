@@ -230,9 +230,8 @@ public:
         if (next.get_type() == token_type::SQUARE_BRACKET_OPEN) {
             // ([ const_exp ])+
 
-            lexer->next_token_with_skip();
-
             while (true) {
+                lexer->next_token_with_skip(); // 吃掉 [
                 this->const_exp();                          // 吃掉 const_exp
                 next = lexer->get_now_token();       // 吃掉 ]
                 next.assert(token_type::SQUARE_BRACKET_CLOSE, L"]");
