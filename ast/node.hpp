@@ -12,150 +12,261 @@
 namespace ast {
     class node {
     public:
-        virtual std::wstring text() {
-            return L"";
+        node() {
+
         }
+
+        node(std::wstring name) : name(name) {
+
+        }
+
+        virtual std::wstring text() {
+            return this->name;
+        }
+
+        virtual void print_tree(int padding = 0) {
+        }
+
+        std::wstring get_name() {
+            return this->name;
+        }
+
+    protected:
+        std::wstring name{};
+
+        std::wstring get_padding(int depth) {
+            std::wostringstream stringStream;
+            for (int i = 0; i < depth; i++) {
+                stringStream << "    ";
+            }
+            return stringStream.str();
+        }
+
+
     };
 
     class non_terminal : public node {
     public:
+        non_terminal(): node() {
+
+        }
+
+        non_terminal(std::wstring name) : node(name) {
+
+        }
+
         std::vector<node*> children{};
 
         void append_children(node* t) {
             children.push_back(t);
         }
+
+        void print_tree(int padding = 0) override {
+            std::wcout << get_padding(padding) << get_name() << std::endl;
+
+            for (auto i : children) {
+                i->print_tree(padding + 1);
+            }
+        };
+
     };
 
     class terminal : public node {
-    private:
-        token _token;
     public:
-        terminal(const token& _token): node() {
+        terminal(const token& _token): node(token_type_get_name(_token.get_type())) {
             this->_token = _token;
         }
 
         std::wstring text() override {
             return this->_token.get_text();
         }
+
+        void print_tree(int padding = 0) override {
+            std::wcout << get_padding(padding) << text() << std::endl;
+        };
+    protected:
+        token _token;
+
     };
 
     class comp_unit : public non_terminal {
+    public:
+        comp_unit() : non_terminal(L"comp_unit") {
 
+        }
     };
 
     class decl : public non_terminal {
+    public:
+        decl() : non_terminal(L"decl") {}
 
     };
 
     class const_decl : public non_terminal {
+    public:
+        const_decl() : non_terminal(L"const_decl") {}
 
     };
 
     class b_type : public non_terminal {
+    public:
+        b_type() : non_terminal(L"b_type") {}
 
     };
 
     class const_def : public non_terminal {
+    public:
+        const_def() : non_terminal(L"const_def") {}
 
     };
 
     class const_init_val : public non_terminal {
+    public:
+        const_init_val() : non_terminal(L"const_init_val") {}
 
     };
 
     class var_decl : public non_terminal {
+    public:
+        var_decl() : non_terminal(L"var_decl") {}
 
     };
 
     class var_def : public non_terminal {
+    public:
+        var_def() : non_terminal(L"var_def") {}
 
     };
 
     class init_val : public non_terminal {
+    public:
+        init_val() : non_terminal(L"init_val") {}
 
     };
 
     class func_def : public non_terminal {
+    public:
+        func_def() : non_terminal(L"func_def") {}
 
     };
 
     class func_type : public non_terminal {
+    public:
+        func_type() : non_terminal(L"func_type") {}
 
     };
 
     class func_fparams : public non_terminal {
+    public:
+        func_fparams() : non_terminal(L"func_fparams") {}
 
     };
 
     class func_fparam : public non_terminal {
+    public:
+        func_fparam() : non_terminal(L"func_fparam") {}
 
     };
 
     class block : public non_terminal {
+    public:
+        block() : non_terminal(L"block") {}
 
     };
 
     class block_item : public non_terminal {
+    public:
+        block_item() : non_terminal(L"block_item") {}
 
     };
 
     class stmt : public non_terminal {
+    public:
+        stmt() : non_terminal(L"stmt") {}
 
     };
 
     class exp : public non_terminal {
+    public:
+        exp() : non_terminal(L"exp") {}
 
     };
 
     class cond : public non_terminal {
+    public:
+        cond() : non_terminal(L"cond") {}
 
     };
 
     class l_val : public non_terminal {
+    public:
+        l_val() : non_terminal(L"l_val") {}
 
     };
 
     class primary_exp : public non_terminal {
+    public:
+        primary_exp() : non_terminal(L"primary_exp") {}
 
     };
 
     class number : public non_terminal {
+    public:
+        number() : non_terminal(L"number") {}
 
     };
 
     class unary_exp : public non_terminal {
+    public:
+        unary_exp() : non_terminal(L"unary_exp") {}
 
     };
 
     class func_rparams : public non_terminal {
+    public:
+        func_rparams() : non_terminal(L"func_rparams") {}
 
     };
 
     class mul_exp : public non_terminal {
+    public:
+        mul_exp() : non_terminal(L"mul_exp") {}
 
     };
 
     class add_exp : public non_terminal {
+    public:
+        add_exp() : non_terminal(L"add_exp") {}
 
     };
 
     class rel_exp : public non_terminal {
+    public:
+        rel_exp() : non_terminal(L"rel_exp") {}
 
     };
 
     class eq_exp : public non_terminal {
+    public:
+        eq_exp() : non_terminal(L"eq_exp") {}
 
     };
 
     class l_and_exp : public non_terminal {
+    public:
+        l_and_exp() : non_terminal(L"l_and_exp") {}
 
     };
 
     class l_or_exp : public non_terminal {
+    public:
+        l_or_exp() : non_terminal(L"l_or_exp") {}
 
     };
 
     class const_exp : public non_terminal {
+    public:
+        const_exp() : non_terminal(L"const_exp") {}
 
     };
 
