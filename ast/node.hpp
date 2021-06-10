@@ -43,6 +43,10 @@ namespace ast {
 
     };
 
+    class decl : public non_terminal {
+
+    };
+
     class const_decl : public non_terminal {
 
     };
@@ -132,10 +136,6 @@ namespace ast {
     };
 
     class add_exp : public non_terminal {
-
-    };
-
-    class add_exp_p : public non_terminal {
 
     };
 

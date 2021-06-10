@@ -11,10 +11,10 @@ void run_test(const std::filesystem::path& case_path) {
     myfile.open(case_path);
 
     lexer _lexer = lexer(myfile);
-    sysy_visitor visitor;
+//    sysy_visitor visitor;
     try {
         auto _parser = parser(&_lexer);
-        _parser.comp_unit();
+        auto tree = _parser.comp_unit();
     }
     catch (token_unexpected_exception &e) {
         std::wcout << "\u001b[31m" << e.get_message() << std::endl;
