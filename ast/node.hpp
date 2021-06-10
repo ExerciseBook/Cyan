@@ -35,6 +35,9 @@ namespace ast {
             return L"";
         }
 
+        virtual void dispose() {
+        }
+
     protected:
         std::wstring name{};
 
@@ -89,6 +92,12 @@ namespace ast {
             return ret.str();
         };
 
+        void dispose() override {
+            for (auto i : children) {
+                i->dispose();
+            }
+            free(this);
+        };
     };
 
     class terminal : public node {
@@ -119,6 +128,11 @@ namespace ast {
 
             return ret.str();
         }
+
+        void dispose() override {
+            free(this);
+        };
+
     private:
         std::wstring json_text() {
             std::wostringstream ret;
