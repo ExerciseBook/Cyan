@@ -38,6 +38,7 @@ int run_test_suite(const std::filesystem::path& test_cases_path) {
 
 int main(int argc, char *argv[]) {
 
+    run_test_suite("../cases/self-make-tests");
     run_test_suite("../cases/section1/functional_test");
     run_test_suite("../cases/section1/performance_test");
     run_test_suite("../cases/section2/performance_test");

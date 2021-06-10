@@ -75,6 +75,9 @@ public:
             } else if (this->lexer->get_now_token().get_type() != token_type::COMMA) {
                 this->lexer->get_now_token().error(L"COMMA");
             }
+            this->lexer->next_token_with_skip();
+
+            this->const_def();
         }
 
     }
