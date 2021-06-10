@@ -31,6 +31,10 @@ namespace ast {
             return this->name;
         }
 
+        virtual std::wstring to_json() {
+            return L"";
+        }
+
     protected:
         std::wstring name{};
 
@@ -41,8 +45,6 @@ namespace ast {
             }
             return stringStream.str();
         }
-
-
     };
 
     class non_terminal : public node {
@@ -69,6 +71,24 @@ namespace ast {
             }
         };
 
+        std::wstring to_json() override {
+            std::wostringstream ret;
+
+            ret << L"{ \"" << get_name() << "\" : [";
+
+            auto size = children.size();
+            for (int i = 0; i < size - 1; i++) {
+                ret << children[i]->to_json();
+                ret << ",";
+            }
+
+            ret << children[size - 1]->to_json();
+
+            ret << L"] }";
+
+            return ret.str();
+        };
+
     };
 
     class terminal : public node {
@@ -84,6 +104,42 @@ namespace ast {
         void print_tree(int padding = 0) override {
             std::wcout << get_padding(padding) << text() << std::endl;
         };
+
+        std::wstring to_json() override {
+            std::wostringstream ret;
+
+            ret << L"{ \"" << get_name() << "\" : {";
+
+            ret << "\"text\" : \"" << json_text() << "\", ";
+            ret << "\"line\" : " << _token.get_line() << ",";
+            ret << "\"column\" : " << _token.get_column() << ",";
+            ret << "\"position\" : " << _token.get_position();
+
+            ret << L"} }";
+
+            return ret.str();
+        }
+    private:
+        std::wstring json_text() {
+            std::wostringstream ret;
+            for (auto i : text()) {
+                if (i == L'"' ||
+                    i == L'\\' ||
+                    i == L'/' ||
+                    i == L'\b' ||
+                    i == L'\f' ||
+                    i == L'\n' ||
+                    i == L'\r' ||
+                    i == L'\t'
+                ) {
+                    ret << "\\";
+                }
+
+                ret << i;
+            }
+            return ret.str();
+        }
+
     protected:
         token _token;
 

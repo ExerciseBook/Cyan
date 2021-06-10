@@ -14,7 +14,8 @@ void run_test(const std::filesystem::path& case_path) {
     try {
         auto _parser = parser(&_lexer);
         auto tree = _parser.comp_unit();
-        tree->print_tree();
+        std::wcout << tree->to_json() << std::endl;
+//        tree->dispose();
     }
     catch (token_unexpected_exception &e) {
         std::wcout << "\u001b[31m" << e.get_message() << std::endl;
