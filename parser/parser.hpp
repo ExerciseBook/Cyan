@@ -34,6 +34,8 @@ public:
             } else if (lexer->get_now_token().get_type() == token_type::VOID) {
                 auto p = this->func_def();
                 ret->append_children(p);
+            } else {
+                lexer->get_now_token().error(L"const, int, void");
             }
         }
 
